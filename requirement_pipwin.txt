@@ -1,0 +1,7 @@
+Fiona
+GDAL
+geopandas
+numpy
+pycurl
+pyproj
+Shapely
