@@ -1,0 +1,34 @@
+#map {
+    width: 100%;
+    height: calc(100vh - 56px);
+}
+
+.map-coordinate {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px;
+    color: #fff;
+    background-color: #17a2b8;
+    border: 1px solid black;
+    border-radius: 2%;
+}
+
+.full-screen {
+    padding:5px;
+    /* color:  */
+    background-color: #fff;
+    position: absolute;
+    right: 10px;
+    top: 220px
+}
+
+.zoom-to-layer{
+    padding: 5px;
+    background-color: #fff;
+    position: absolute;
+    right: 10px;
+    top: 260px;
+}
+
