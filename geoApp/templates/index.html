@@ -101,7 +101,7 @@ $('.pin').on('click', function(){
         {% csrf_token %}
         <div class="form-group">
           <label for="note heading">Note heading</label>
-          <input type="text" name='note-heading' class="form-control" placeholder="Enter note heading">
+          <input type="text" name='note_heading' class="form-control" placeholder="Enter note heading">
         </div>
 
         <input type="hidden" name="lat" value="${lat}">
@@ -109,7 +109,7 @@ $('.pin').on('click', function(){
 
         <div class="form-group">
           <label for="note">Note</label>
-          <textarea class='form-control' name="note" >Enter note here</textarea>
+          <textarea class='form-control' name="note_des" >Enter note here</textarea>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>`;
