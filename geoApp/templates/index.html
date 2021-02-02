@@ -121,10 +121,18 @@ $('.pin').on('click', function(){
     map.off('click')
 }
 })
+    var markerGroup = new L.featureGroup()
+    {% for n in note %}
+        var lat = {{n.lat}}
+        var lng = {{n.lng}}
+        var marker = L.marker([lat, lng]).bindPopup(`<h3>{{n.note_heading}}</h3><p>{{n.note}}</p>`)
+        marker.addTo(markerGroup)
+    {% endfor %}
 
 
-
-    var overlayMaps = {};
+    var overlayMaps = {
+        'Notes': markerGroup
+    };
 
 
     //Shapefile wms
