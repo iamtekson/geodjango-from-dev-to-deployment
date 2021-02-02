@@ -14,6 +14,12 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     <link rel="stylesheet" href="{% static './dist/style.css' %}">
     <title>Leaflet Geoproject</title>
+
+    <style>
+        .leaflet-popup-content{
+            width: 300px;
+        }
+    </style>
 </head>
 
 <body>
@@ -77,6 +83,30 @@
 <script src="{% static './dist/web-GIS.js' %}"></script>\
 
 <script>
+
+    map.on('click', function(e){
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+        var popup = `<form action="{% url 'note' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="note heading">Note heading</label>
+                            <input type="text" name='note_heading' class="form-control" placeholder="Enter note heading">
+                        </div>
+
+                        <input type="hidden" name="lat" value="${lat}">
+                        <input type="hidden" name="lng" value ="${lng}">
+
+                        <div class="form-group">
+                        <label for="note">Note Description</label>
+                        <textarea class='form-control' name="note_des" >Enter note here..</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                </form>`;
+        var marker = L.marker([lat, lng]).bindPopup(popup);
+        marker.addTo(map)
+        console.log(e)
+    })
 
     var overlayMaps = {};
 
