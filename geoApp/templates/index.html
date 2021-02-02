@@ -14,6 +14,12 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     <link rel="stylesheet" href="{% static './dist/style.css' %}">
     <title>Leaflet Geoproject</title>
+
+    <style>
+            .leaflet-popup-content {
+                width: 500px;
+            }
+    </style>
 </head>
 
 <body>
@@ -61,6 +67,12 @@
                 <path fill-rule="evenodd" d="M13 2.5V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
             </svg>
         </div>
+
+        <div class="leaflet-control pin leaflet-prevent">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-angle-fill" viewBox="0 0 16 16">
+                <path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.92 5.92 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/>
+              </svg>
+        </div>
     </div>
 
 </body>
@@ -74,9 +86,43 @@
 <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 <script src="{% static './data/test.js' %}"></script>
 <script src="{% static './dist/main.js' %}"></script>
-<script src="{% static './dist/web-GIS.js' %}"></script>\
+<script src="{% static './dist/web-GIS.js' %}"></script>
 
 <script>
+
+$(".leaflet-prevent").on("click", L.DomEvent.stopPropagation);
+var mapPinToggler =true;
+$('.pin').on('click', function(){
+    if(mapPinToggler){
+    map.on('click', function(e){
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+        var popup = `<form action="{% url 'note' %}" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="note heading">Note heading</label>
+          <input type="text" name='note-heading' class="form-control" placeholder="Enter note heading">
+        </div>
+
+        <input type="hidden" name="lat" value="${lat}">
+        <input type="hidden" name="lng" value ="${lng}">
+
+        <div class="form-group">
+          <label for="note">Note</label>
+          <textarea class='form-control' name="note" >Enter note here</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>`;
+        var marker = L.marker([e.latlng.lat, e.latlng.lng]).bindPopup(popup);
+        marker.addTo(map)
+    })
+    mapPinToggler = !mapPinToggler;
+}else {
+    map.off('click')
+}
+})
+
+
 
     var overlayMaps = {};
 

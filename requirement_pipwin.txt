@@ -1,7 +1,6 @@
-Fiona
 GDAL
-geopandas
-numpy
+Fiona
 pycurl
 pyproj
 Shapely
+geopandas
