@@ -43,32 +43,43 @@ def publish_data(sender, instance, created, **kwargs):
         zip_ref.extractall(file_path)
 
     os.remove(file)  # remove zip file
-
+    
     shp = glob.glob(r'{}/**/*.shp'.format(file_path),
-                    recursive=True)[0]  # to get shp
+                    recursive=True)  # to get shp
+    try:
+        req_shp = shp[0]
+        gdf = gpd.read_file(req_shp)  # make geodataframe
 
-    gdf = gpd.read_file(shp)  # make geodataframe
+        crs_name = str(gdf.crs.srs)
 
-    crs_name = str(gdf.crs.srs)
+        epsg = int(crs_name.replace('epsg:', ''))
 
-    epsg = int(crs_name.replace('epsg:', ''))
+        if epsg is None:
+            epsg = 4326  # wgs 84 coordinate system
 
-    if epsg is None:
-        epsg = 4326  # wgs 84 coordinate system
+        geom_type = gdf.geom_type[1]
 
-    geom_type = gdf.geom_type[1]
+        engine = create_engine(conn_str)  # create the SQLAlchemy's engine to use
 
-    engine = create_engine(conn_str)  # create the SQLAlchemy's engine to use
+        gdf['geom'] = gdf['geometry'].apply(lambda x: WKTElement(x.wkt, srid=epsg))
 
-    gdf['geom'] = gdf['geometry'].apply(lambda x: WKTElement(x.wkt, srid=epsg))
+            # Drop the geometry column (since we already backup this column with geom)
+        gdf.drop('geometry', 1, inplace=True)
 
-    # Drop the geometry column (since we already backup this column with geom)
-    gdf.drop('geometry', 1, inplace=True)
+        gdf.to_sql(name, engine, 'data', if_exists='replace',
+                       index=False, dtype={'geom': Geometry('Geometry', srid=epsg)})  # post gdf to the postgresql
 
-    gdf.to_sql(name, engine, 'data', if_exists='replace',
-               index=False, dtype={'geom': Geometry('Geometry', srid=epsg)})  # post gdf to the postgresql
-
-    os.remove(shp)
+        for s in shp:
+            os.remove(s)
+        
+    except Exception as e:
+        for s in shp:
+           os.remove(s)
+        
+        instance.delete()
+        print("There is problem during shp upload: ", e)
+        
+        
     '''
     Publish shp to geoserver using geoserver-rest
     '''
