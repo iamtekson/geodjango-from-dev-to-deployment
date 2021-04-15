@@ -57,7 +57,7 @@ def publish_data(sender, instance, created, **kwargs):
         if epsg is None:
             epsg = 4326  # wgs 84 coordinate system
 
-        geom_type = gdf.geom_type[1]
+        #geom_type = gdf.geom_type[1]
 
         engine = create_engine(conn_str)  # create the SQLAlchemy's engine to use
 
