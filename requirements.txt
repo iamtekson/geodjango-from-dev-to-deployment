@@ -7,7 +7,7 @@ click==7.1.2
 click-plugins==1.1.1
 cligj==0.7.1
 cycler==0.10.0
-Django==3.1.9
+Django==3.1.12
 docopt==0.6.2
 GeoAlchemy2==0.8.4
 geoserver-rest==1.2.5
