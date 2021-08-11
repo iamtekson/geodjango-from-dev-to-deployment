@@ -50,9 +50,9 @@ def publish_data(sender, instance, created, **kwargs):
         req_shp = shp[0]
         gdf = gpd.read_file(req_shp)  # make geodataframe
 
-        crs_name = str(gdf.crs.srs)
+        crs_name = gdf.crs
 
-        epsg = int(crs_name.replace('epsg:', ''))
+        epsg = crs_name.to_epsg()
 
         if epsg is None:
             epsg = 4326  # wgs 84 coordinate system
