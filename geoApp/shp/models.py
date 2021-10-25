@@ -57,17 +57,10 @@ def publish_data(sender, instance, created, **kwargs):
         if epsg is None:
             epsg = 4326  # wgs 84 coordinate system
 
-        #geom_type = gdf.geom_type[1]
-
-        engine = create_engine(conn_str)  # create the SQLAlchemy's engine to use
-
-        gdf['geom'] = gdf['geometry'].apply(lambda x: WKTElement(x.wkt, srid=epsg))
-
-            # Drop the geometry column (since we already backup this column with geom)
-        gdf.drop('geometry', 1, inplace=True)
-
-        gdf.to_sql(name, engine, 'data', if_exists='replace',
-                       index=False, dtype={'geom': Geometry('Geometry', srid=epsg)})  # post gdf to the postgresql
+        gdf.to_postgis(
+                    con=engine,
+                    name=name,
+                    if_exist="replace")
 
         for s in shp:
             os.remove(s)
