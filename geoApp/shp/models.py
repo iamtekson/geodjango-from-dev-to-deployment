@@ -59,6 +59,7 @@ def publish_data(sender, instance, created, **kwargs):
 
         gdf.to_postgis(
                     con=engine,
+                    schema='data',
                     name=name,
                     if_exist="replace")
 
