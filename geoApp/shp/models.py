@@ -49,14 +49,6 @@ def publish_data(sender, instance, created, **kwargs):
     try:
         req_shp = shp[0]
         gdf = gpd.read_file(req_shp)  # make geodataframe
-
-        crs_name = gdf.crs
-
-        epsg = crs_name.to_epsg()
-
-        if epsg is None:
-            epsg = 4326  # wgs 84 coordinate system
-
         gdf.to_postgis(
                     con=engine,
                     schema='data',
