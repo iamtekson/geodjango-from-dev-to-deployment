@@ -53,7 +53,7 @@ def publish_data(sender, instance, created, **kwargs):
                     con=engine,
                     schema='data',
                     name=name,
-                    if_exist="replace")
+                    if_exists="replace")
 
         for s in shp:
             os.remove(s)
