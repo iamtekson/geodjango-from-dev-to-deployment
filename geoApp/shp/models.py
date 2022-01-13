@@ -49,6 +49,7 @@ def publish_data(sender, instance, created, **kwargs):
     try:
         req_shp = shp[0]
         gdf = gpd.read_file(req_shp)  # make geodataframe
+        engine = create_engine(conn_str)
         gdf.to_postgis(
                     con=engine,
                     schema='data',
