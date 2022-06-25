@@ -20,6 +20,7 @@ packaging==20.7
 pandas==1.1.5
 Pillow==9.0.1
 pipwin==0.5.0
+postgres-helper==0.0.5
 psycopg2==2.8.6
 pyjsparser==2.7.1
 pyparsing==2.4.7

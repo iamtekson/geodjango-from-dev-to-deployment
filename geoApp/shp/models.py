@@ -7,12 +7,11 @@ import os
 import glob
 import zipfile
 from sqlalchemy import *
-from geoalchemy2 import Geometry, WKTElement
 from geo.Geoserver import Geoserver
-from geo.Postgres import Db
+from pg.pg import Pg
 
 # initializing the library
-db = Db(dbname='geoapp', user='postgres',
+db = Pg(dbname='geoapp', user='postgres',
         password='gicait123', host='localhost', port='5432')
 geo = Geoserver('http://127.0.0.1:8080/geoserver',
                 username='admin', password='geoserver')
@@ -43,7 +42,7 @@ def publish_data(sender, instance, created, **kwargs):
         zip_ref.extractall(file_path)
 
     os.remove(file)  # remove zip file
-    
+
     shp = glob.glob(r'{}/**/*.shp'.format(file_path),
                     recursive=True)  # to get shp
     try:
@@ -51,25 +50,22 @@ def publish_data(sender, instance, created, **kwargs):
         gdf = gpd.read_file(req_shp)  # make geodataframe
         engine = create_engine(conn_str)
         gdf.to_postgis(
-                    con=engine,
-                    schema='data',
-                    name=name,
-                    if_exists="replace")
+            con=engine,
+            schema='data',
+            name=name,
+            if_exists="replace")
 
         for s in shp:
             os.remove(s)
-        
+
     except Exception as e:
         for s in shp:
-           os.remove(s)
-        
+            os.remove(s)
+
         instance.delete()
         print("There is problem during shp upload: ", e)
-        
-        
-    '''
-    Publish shp to geoserver using geoserver-rest
-    '''
+
+    # publish shp to the geoserver using geoserver-rest
     geo.create_featurestore(store_name='geoApp', workspace='geoapp', db='geoapp',
                             host='localhost', pg_user='postgres', pg_password='gicait123', schema='data')
     geo.publish_featurestore(
@@ -77,12 +73,11 @@ def publish_data(sender, instance, created, **kwargs):
 
     geo.create_outline_featurestyle('geoApp_shp', workspace='geoapp')
 
-    geo.publish_style(layer_name=name, style_name='geoApp_shp', workspace='geoapp')
-
-
+    geo.publish_style(
+        layer_name=name, style_name='geoApp_shp', workspace='geoapp')
 
 
 @receiver(post_delete, sender=Shp)
 def delete_data(sender, instance, **kwargs):
-    db.delete_table(table_name=instance.name, schema='data', dbname='geoapp')
+    db.delete_table(instance.name, schema='data')
     geo.delete_layer(instance.name, 'geoapp')
