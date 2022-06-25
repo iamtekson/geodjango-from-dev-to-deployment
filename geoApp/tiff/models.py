@@ -39,7 +39,7 @@ def publish_data(sender, instance, created, **kwargs):
     '''
     Publish tiff file to geoserver using geoserver-rest
     '''
-    geo.create_coveragestore(file, workspace='geoapp', lyr_name=name)
+    geo.create_coveragestore(file, workspace='geoapp', layer_name=name)
     geo.create_coveragestyle(file, style_name=name, workspace='geoapp')
     geo.publish_style(layer_name=name, style_name=name, workspace='geoapp')
 
